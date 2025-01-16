@@ -6,83 +6,96 @@
     --accent: #007bff;
     --border: #e0e0e0;
     --shadow: rgba(0, 0, 0, 0.1);
-  }
-  
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg-primary: #1a1a1a;
-      --bg-secondary: #2d2d2d;
-      --text-primary: #ffffff;
-      --text-secondary: #a0a0a0;
-      --border: #404040;
-      --shadow: rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  * {
+}
+
+.dark-mode {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --text-primary: #ffffff;
+    --text-secondary: #a0a0a0;
+    --border: #404040;
+    --shadow: rgba(0, 0, 0, 0.2);
+}
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-  }
-  
-  body {
+}
+
+body {
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.5;
-  }
-  
-  .container {
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-  }
-  
-  header {
+}
+
+header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-  }
-  
-  .time-display {
+}
+
+.time-display {
     font-size: 2rem;
     font-weight: 500;
-  }
-  
-  main {
+}
+
+#theme-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+#theme-toggle:hover {
+    background-color: var(--bg-secondary);
+}
+
+main {
     display: grid;
     gap: 2rem;
-  }
-  
-  .content-wrapper {
+}
+
+.content-wrapper {
     display: grid;
     gap: 2rem;
-  }
-  
-  /* Pomodoro Section */
-  .pomodoro {
+}
+
+/* Pomodoro Section */
+.pomodoro {
     background: var(--bg-secondary);
     padding: 2rem;
     border-radius: 1rem;
     text-align: center;
     box-shadow: 0 2px 8px var(--shadow);
-  }
-  
-  .timer-display {
+}
+
+.timer-display {
     font-size: 3.5rem;
     font-weight: 500;
     margin-bottom: 1.5rem;
-  }
-  
-  .timer-controls {
+}
+
+.timer-controls {
     display: flex;
     gap: 1rem;
     justify-content: center;
     margin-bottom: 1rem;
-  }
-  
-  .timer-button {
+}
+
+.timer-button {
     padding: 0.75rem 2rem;
     border: none;
     border-radius: 0.5rem;
@@ -92,41 +105,41 @@
     font-size: 1rem;
     cursor: pointer;
     transition: opacity 0.2s;
-  }
-  
-  .timer-button:hover {
+}
+
+.timer-button:hover {
     opacity: 0.9;
-  }
-  
-  .timer-mode {
+}
+
+.timer-mode {
     color: var(--text-secondary);
     font-size: 0.9rem;
-  }
-  
-  /* Tasks Section */
-  .tasks {
+}
+
+/* Tasks Section */
+.tasks {
     background: var(--bg-secondary);
     padding: 1.5rem;
     border-radius: 1rem;
     box-shadow: 0 2px 8px var(--shadow);
-  }
-  
-  .section-header {
+}
+
+.section-header {
     margin-bottom: 1.5rem;
-  }
-  
-  .section-header h2 {
+}
+
+.section-header h2 {
     font-size: 1.5rem;
     font-weight: 500;
-  }
-  
-  .task-form {
+}
+
+.task-form {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
-  }
-  
-  .task-input {
+}
+
+.task-input {
     flex: 1;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -135,14 +148,14 @@
     font-size: 0.9rem;
     background: var(--bg-primary);
     color: var(--text-primary);
-  }
-  
-  .task-input:focus {
+}
+
+.task-input:focus {
     outline: none;
     border-color: var(--accent);
-  }
-  
-  .add-task {
+}
+
+.add-task {
     padding: 0.75rem;
     background: var(--accent);
     border: none;
@@ -150,32 +163,188 @@
     color: white;
     cursor: pointer;
     transition: opacity 0.2s;
-  }
-  
-  .add-task:hover {
+}
+
+.add-task:hover {
     opacity: 0.9;
-  }
-  
-  .task-list {
+}
+
+.task-list {
     list-style: none;
-  }
-  
-  /* Calendar Section */
-  .calendar-simple {
+}
+
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-checkbox {
+    appearance: none;
+    width: 1.2rem;
+    height: 1.2rem;
+    border: 2px solid var(--accent);
+    border-radius: 0.3rem;
+    cursor: pointer;
+    position: relative;
+}
+
+.task-checkbox:checked::before {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--accent);
+    font-size: 0.8rem;
+}
+
+.task-text {
+    flex: 1;
+}
+
+.delete-task {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.2rem;
+}
+
+/* Calendar Section */
+.calendar-simple {
     background: var(--bg-secondary);
     padding: 1.5rem;
     border-radius: 1rem;
     box-shadow: 0 2px 8px var(--shadow);
-  }
-  
-  /* Shortcuts Section */
-  .shortcuts-grid {
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.info-button {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.calendar-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.ical-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.save-ical {
+    padding: 0.75rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.save-ical:hover {
+    opacity: 0.9;
+}
+
+.info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.info-modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 500px;
+    width: 90%;
+}
+
+.close-modal {
+    display: block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    cursor: pointer;
+}
+
+/* Shortcuts Section */
+.shortcuts {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.shortcuts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.add-shortcut {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.shortcuts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 1rem;
-  }
-  
-  .shortcut {
+}
+
+.shortcut-wrapper {
+    position: relative;
+}
+
+.shortcut {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     background: var(--bg-primary);
     padding: 1rem;
     border-radius: 0.75rem;
@@ -184,27 +353,73 @@
     transition: transform 0.2s, background-color 0.2s;
     border: 1px solid var(--border);
     text-align: center;
-  }
-  
-  .shortcut:hover {
+    height: 100%;
+}
+
+.shortcut:hover {
     transform: translateY(-2px);
     background: var(--bg-secondary);
-  }
-  
-  .shortcut-name {
+}
+
+.shortcut-name {
     font-size: 0.9rem;
     font-weight: 500;
-  }
-  
-  /* Media Queries */
-  @media (min-width: 768px) {
+    margin-top: 0.5rem;
+}
+
+.delete-shortcut {
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.shortcut-wrapper:hover .delete-shortcut {
+    opacity: 1;
+}
+
+/* Notification */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(transform: translateY(0);
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
     .content-wrapper {
-      grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
     }
-  }
-  
-  @media (min-width: 1024px) {
+}
+
+@media (min-width: 1024px) {
     .content-wrapper {
-      grid-template-columns: 1fr 2fr;
+        grid-template-columns: 1fr 2fr;
     }
-  }
+}
+
