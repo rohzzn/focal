@@ -1,17 +1,132 @@
-.calendar-header {
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --accent: #007bff;
+    --border: #e0e0e0;
+    --shadow: rgba(0, 0, 0, 0.1);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1a1a1a;
+      --bg-secondary: #2d2d2d;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a0a0;
+      --border: #404040;
+      --shadow: rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .time-display {
+    font-size: 2rem;
+    font-weight: 500;
+  }
+  
+  main {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  .content-wrapper {
+    display: grid;
+    gap: 2rem;
+  }
+  
+  /* Pomodoro Section */
+  .pomodoro {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  
+  .timer-display {
+    font-size: 3.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  
+  .timer-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
     margin-bottom: 1rem;
-}
-
-.calendar-input {
+  }
+  
+  .timer-button {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--accent);
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  
+  .timer-button:hover {
+    opacity: 0.9;
+  }
+  
+  .timer-mode {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+  
+  /* Tasks Section */
+  .tasks {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .task-form {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.ical-input {
+    margin-bottom: 1.5rem;
+  }
+  
+  .task-input {
     flex: 1;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -19,214 +134,77 @@
     font-family: inherit;
     font-size: 0.9rem;
     background: var(--bg-primary);
-}
-
-.save-ical {
-    padding: 0.75rem 1.5rem;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.save-ical:hover {
-    opacity: 0.9;
-}
-
-.info-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.info-button:hover {
-    background-color: var(--bg-primary);
-}
-
-/* Modal styles */
-.info-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: var(--bg-secondary);
-    padding: 2rem;
-    border-radius: 1rem;
-    max-width: 400px;
-    width: 90%;
-}
-
-.modal-content h3 {
-    margin-bottom: 1rem;
-}
-
-.modal-content ol {
-    margin: 1rem 0;
-    padding-left: 1.5rem;
-}
-
-.modal-content li {
-    margin-bottom: 0.5rem;
-}
-
-.close-modal {
-    width: 100%;
+    color: var(--text-primary);
+  }
+  
+  .task-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  .add-task {
     padding: 0.75rem;
     background: var(--accent);
-    color: white;
     border: none;
     border-radius: 0.5rem;
+    color: white;
     cursor: pointer;
-    margin-top: 1rem;
     transition: opacity 0.2s;
-}
-
-.close-modal:hover {
+  }
+  
+  .add-task:hover {
     opacity: 0.9;
-}
-
-/* Shortcuts grid with updated styles */
-.shortcuts {
+  }
+  
+  .task-list {
+    list-style: none;
+  }
+  
+  /* Calendar Section */
+  .calendar-simple {
     background: var(--bg-secondary);
-    border-radius: 1rem;
     padding: 1.5rem;
+    border-radius: 1rem;
     box-shadow: 0 2px 8px var(--shadow);
-}
-
-.shortcuts-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.shortcuts-grid {
+  }
+  
+  /* Shortcuts Section */
+  .shortcuts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 1rem;
-}
-
-.shortcut-wrapper {
-    position: relative;
+  }
+  
+  .shortcut {
     background: var(--bg-primary);
-    border-radius: 0.75rem;
-    transition: transform 0.2s, background-color 0.2s;
-}
-
-.shortcut-wrapper:hover {
-    transform: translateY(-2px);
-    background-color: var(--border);
-}
-
-.shortcut {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
     padding: 1rem;
+    border-radius: 0.75rem;
     text-decoration: none;
     color: var(--text-primary);
-}
-
-.shortcut-icon {
-    font-size: 1.5rem;
-}
-
-.shortcut-name {
-    font-size: 0.9rem;
+    transition: transform 0.2s, background-color 0.2s;
+    border: 1px solid var(--border);
     text-align: center;
-}
-
-.delete-shortcut {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-secondary);
-    padding: 0.25rem;
-    border-radius: 0.3rem;
-    opacity: 0;
-    transition: opacity 0.2s, background-color 0.2s;
-    z-index: 2;
-}
-
-.shortcut-wrapper:hover .delete-shortcut {
-    opacity: 1;
-}
-
-.delete-shortcut:hover {
-    background-color: var(--border);
-}
-
-/* Notification styles */
-.notification {
-    position: fixed;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        transform: translate(-50%, 100%);
-        opacity: 0;
-    }
-    to {
-        transform: translate(-50%, 0);
-        opacity: 1;
-    }
-}
-
-/* Responsive styles */
-@media (min-width: 640px) {
-    .shortcuts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    }
-}
-
-@media (min-width: 768px) {
+  }
+  
+  .shortcut:hover {
+    transform: translateY(-2px);
+    background: var(--bg-secondary);
+  }
+  
+  .shortcut-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  /* Media Queries */
+  @media (min-width: 768px) {
     .content-wrapper {
-        grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
     }
-    
-    .shortcuts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-}
-
-@media (min-width: 1024px) {
+  }
+  
+  @media (min-width: 1024px) {
     .content-wrapper {
-        grid-template-columns: 1fr 2fr;
+      grid-template-columns: 1fr 2fr;
     }
-    
-    .shortcuts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-}
-
-/* Additional utility classes */
-.hidden {
-    display: none !important;
-}
+  }

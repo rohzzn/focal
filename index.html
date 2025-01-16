@@ -13,16 +13,6 @@
     <div class="container">
         <header>
             <div class="time-display"></div>
-            <div class="music-player">
-                <button class="play-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
-                </button>
-                <div class="volume-control">
-                    <input type="range" min="0" max="100" value="50" class="volume-slider">
-                </div>
-            </div>
         </header>
 
         <main>
@@ -42,12 +32,7 @@
                     </div>
                     <form class="task-form">
                         <input type="text" placeholder="Add a task..." class="task-input">
-                        <button type="submit" class="add-task">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                        </button>
+                        <button type="submit" class="add-task">Add</button>
                     </form>
                     <ul class="task-list"></ul>
                 </section>
@@ -55,13 +40,7 @@
                 <section class="calendar-simple">
                     <div class="calendar-header">
                         <h2>Calendar</h2>
-                        <button class="info-button" title="How to get iCal URL">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <line x1="12" y1="16" x2="12" y2="12"></line>
-                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                            </svg>
-                        </button>
+                        <button class="info-button" title="How to get iCal URL">?</button>
                     </div>
                     <div class="calendar-input">
                         <input type="text" placeholder="Paste your iCal URL..." class="ical-input">
