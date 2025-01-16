@@ -1,269 +1,17 @@
-:root {
-    --bg-primary: #fafafa;
-    --bg-secondary: #ffffff;
-    --text-primary: #27272a;
-    --text-secondary: #71717a;
-    --accent: #3b82f6;
-    --border: #e4e4e7;
-    --shadow: rgba(0, 0, 0, 0.05);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Space Grotesk', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    line-height: 1.5;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.time-display {
-    font-size: 3rem;
-    font-weight: 300;
-}
-
-.music-player {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--bg-secondary);
-    padding: 0.75rem;
-    border-radius: 1rem;
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.play-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-primary);
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.play-button:hover {
-    background-color: var(--bg-primary);
-}
-
-.volume-slider {
-    width: 100px;
-    height: 4px;
-    -webkit-appearance: none;
-    background: var(--border);
-    border-radius: 2px;
-    outline: none;
-}
-
-.volume-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-main {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    flex: 1;
-}
-
-.pomodoro, .tasks, .shortcuts {
-    background: var(--bg-secondary);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px var(--shadow);
-}
-
-.timer-display {
-    font-size: 4rem;
-    font-weight: 300;
-    text-align: center;
-    margin-bottom: 1rem;
-}
-
-.timer-controls {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.timer-button {
-    background: var(--bg-primary);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-}
-
-.timer-button:hover {
-    background-color: var(--border);
-}
-
-/* Calendar Styles */
-.calendar {
-    background: var(--bg-secondary);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px var(--shadow);
-    grid-column: 1 / -1;
-}
-
 .calendar-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-.auth-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background-color: var(--bg-primary);
-    border: none;
-    border-radius: 0.5rem;
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.auth-button:hover {
-    background-color: var(--border);
-}
-
-.events-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
-.events-today, .events-upcoming {
-    background: var(--bg-primary);
-    border-radius: 0.75rem;
-    padding: 1rem;
-}
-
-.events-list {
-    margin-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.event-card {
-    background: var(--bg-secondary);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    display: flex;
-    gap: 1rem;
-    align-items: flex-start;
-    animation: fadeIn 0.2s ease-out;
-}
-
-.event-time {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    min-width: 5rem;
-}
-
-.event-details {
-    flex: 1;
-}
-
-.event-title {
-    font-weight: 500;
-    margin-bottom: 0.25rem;
-}
-
-.event-location {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.event-link {
-    color: var(--accent);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-}
-
-.event-link:hover {
-    text-decoration: underline;
-}
-
-/* Auth styles */
-.user-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-#user-button {
-    min-width: 200px;
-}
-
-.auth-required-message {
-    text-align: center;
-    padding: 2rem;
-    color: var(--text-secondary);
-    background: var(--bg-primary);
-    border-radius: 0.75rem;
-    font-size: 0.9rem;
-}
-
-.hidden {
-    display: none;
-}
-
-.timer-mode {
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.task-form {
+.calendar-input {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
-.task-input {
+.ical-input {
     flex: 1;
     padding: 0.75rem;
     border: 1px solid var(--border);
@@ -273,126 +21,212 @@ main {
     background: var(--bg-primary);
 }
 
-.task-input:focus {
-    outline: none;
-    border-color: var(--accent);
+.save-ical {
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
 
-.add-task, .add-shortcut {
+.save-ical:hover {
+    opacity: 0.9;
+}
+
+.info-button {
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-secondary);
     padding: 0.5rem;
-    border-radius: 0.5rem;
+    border-radius: 50%;
     transition: background-color 0.2s;
 }
 
-.add-task:hover, .add-shortcut:hover {
+.info-button:hover {
     background-color: var(--bg-primary);
-    color: var(--text-primary);
 }
 
-.task-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.task-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--bg-primary);
-    border-radius: 0.5rem;
-    animation: fadeIn 0.2s ease-out;
-}
-
-.task-checkbox {
-    width: 1.2rem;
-    height: 1.2rem;
-    border: 2px solid var(--border);
-    border-radius: 0.3rem;
-    cursor: pointer;
+/* Modal styles */
+.info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s, border-color 0.2s;
+    z-index: 1000;
 }
 
-.task-checkbox.checked {
-    background-color: var(--accent);
-    border-color: var(--accent);
+.modal-content {
+    background: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 1rem;
+    max-width: 400px;
+    width: 90%;
 }
 
-.task-text {
-    flex: 1;
-    font-size: 0.9rem;
+.modal-content h3 {
+    margin-bottom: 1rem;
 }
 
-.task-text.completed {
-    text-decoration: line-through;
-    color: var(--text-secondary);
+.modal-content ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
 }
 
-.delete-task {
-    opacity: 0;
-    background: none;
+.modal-content li {
+    margin-bottom: 0.5rem;
+}
+
+.close-modal {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: white;
     border: none;
+    border-radius: 0.5rem;
     cursor: pointer;
-    color: var(--text-secondary);
-    padding: 0.25rem;
-    border-radius: 0.3rem;
-    transition: opacity 0.2s, background-color 0.2s;
+    margin-top: 1rem;
+    transition: opacity 0.2s;
 }
 
-.task-item:hover .delete-task {
-    opacity: 1;
+.close-modal:hover {
+    opacity: 0.9;
 }
 
-.delete-task:hover {
-    background-color: var(--border);
+/* Shortcuts grid with updated styles */
+.shortcuts {
+    background: var(--bg-secondary);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 .shortcuts-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .shortcuts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.75rem;
+    gap: 1rem;
+}
+
+.shortcut-wrapper {
+    position: relative;
+    background: var(--bg-primary);
+    border-radius: 0.75rem;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.shortcut-wrapper:hover {
+    transform: translateY(-2px);
+    background-color: var(--border);
 }
 
 .shortcut {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem;
-    background: var(--bg-primary);
-    border-radius: 0.5rem;
+    padding: 1rem;
     text-decoration: none;
     color: var(--text-primary);
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
 }
 
-.shortcut:hover {
+.shortcut-icon {
+    font-size: 1.5rem;
+}
+
+.shortcut-name {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.delete-shortcut {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0.25rem;
+    border-radius: 0.3rem;
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s;
+    z-index: 2;
+}
+
+.shortcut-wrapper:hover .delete-shortcut {
+    opacity: 1;
+}
+
+.delete-shortcut:hover {
     background-color: var(--border);
 }
 
-@keyframes fadeIn {
+/* Notification styles */
+.notification {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
     from {
+        transform: translate(-50%, 100%);
         opacity: 0;
-        transform: translateY(5px);
     }
     to {
+        transform: translate(-50%, 0);
         opacity: 1;
-        transform: translateY(0);
     }
+}
+
+/* Responsive styles */
+@media (min-width: 640px) {
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
+@media (min-width: 768px) {
+    .content-wrapper {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .content-wrapper {
+        grid-template-columns: 1fr 2fr;
+    }
+    
+    .shortcuts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    }
+}
+
+/* Additional utility classes */
+.hidden {
+    display: none !important;
 }

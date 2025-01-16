@@ -4,14 +4,20 @@
   "version": "1.0",
   "description": "A minimal, beautiful dashboard with lofi music and calendar integration",
   "permissions": [
-    "storage"
+    "storage",
+    "identity"
   ],
   "host_permissions": [
     "https://clerk.com/*",
-    "https://api.clerk.dev/*"
+    "https://api.clerk.dev/*",
+    "https://accounts.google.com/*",
+    "https://www.googleapis.com/*"
   ],
   "chrome_url_overrides": {
     "newtab": "index.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' https://clerk.browser.accounts.dev; object-src 'self'"
   },
   "icons": {
     "16": "icon16.png",

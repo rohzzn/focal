@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focal</title>
+    <title>Focal - New Tab</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
-    <script src="https://clerk.browser.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js"></script>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="time-display"></div>
-            <div class="user-section">
-                <div class="music-player">
-                    <button class="play-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                        </svg>
-                    </button>
-                    <div class="volume-control">
-                        <input type="range" min="0" max="100" value="50" class="volume-slider">
-                    </div>
+            <div class="music-player">
+                <button class="play-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                </button>
+                <div class="volume-control">
+                    <input type="range" min="0" max="100" value="50" class="volume-slider">
                 </div>
-                <div id="user-button"></div>
             </div>
         </header>
 
@@ -39,55 +35,76 @@
                 <div class="timer-mode">Focus Time</div>
             </section>
 
-            <section class="tasks">
-                <form class="task-form">
-                    <input type="text" placeholder="Add a task..." class="task-input">
-                    <button type="submit" class="add-task">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                    </button>
-                </form>
-                <ul class="task-list"></ul>
-            </section>
+            <div class="content-wrapper">
+                <section class="tasks">
+                    <div class="section-header">
+                        <h2>Tasks</h2>
+                    </div>
+                    <form class="task-form">
+                        <input type="text" placeholder="Add a task..." class="task-input">
+                        <button type="submit" class="add-task">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </form>
+                    <ul class="task-list"></ul>
+                </section>
 
-            <section class="calendar">
-                <div class="calendar-header">
-                    <h2>Calendar</h2>
-                    <div id="auth-section">
-                        <!-- Clerk will handle the sign-in UI -->
+                <section class="calendar-simple">
+                    <div class="calendar-header">
+                        <h2>Calendar</h2>
+                        <button class="info-button" title="How to get iCal URL">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </button>
                     </div>
-                </div>
-                <div class="events-container">
-                    <div class="auth-required-message">
-                        Sign in to view your calendar
+                    <div class="calendar-input">
+                        <input type="text" placeholder="Paste your iCal URL..." class="ical-input">
+                        <button class="save-ical">Save</button>
                     </div>
-                    <div class="events-today hidden">
-                        <h3>Today</h3>
-                        <div class="events-list" id="events-today"></div>
+                    <div class="info-modal hidden">
+                        <div class="modal-content">
+                            <h3>How to get your iCal URL</h3>
+                            <ol>
+                                <li>Go to Google Calendar</li>
+                                <li>Click the 3 dots next to your calendar</li>
+                                <li>Select "Settings and sharing"</li>
+                                <li>Scroll to "Secret address in iCal format"</li>
+                                <li>Click "Copy address"</li>
+                            </ol>
+                            <button class="close-modal">Close</button>
+                        </div>
                     </div>
-                    <div class="events-upcoming hidden">
-                        <h3>Upcoming</h3>
-                        <div class="events-list" id="events-upcoming"></div>
-                    </div>
-                </div>
-            </section>
+                    <div class="events-list"></div>
+                </section>
+            </div>
 
             <section class="shortcuts">
                 <div class="shortcuts-header">
                     <h2>Quick Links</h2>
-                    <button class="add-shortcut">
+                    <button class="add-shortcut" title="Add custom shortcut">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="12" y1="5" x2="12" y2="19"></line>
                             <line x1="5" y1="12" x2="19" y2="12"></line>
                         </svg>
                     </button>
                 </div>
-                <div class="shortcuts-grid"></div>
+                <div class="shortcuts-grid">
+                    <!-- Quick links will be dynamically added here -->
+                </div>
             </section>
         </main>
+
+        <!-- Notification container -->
+        <div class="notification-container"></div>
     </div>
+
+    <!-- Scripts -->
     <script src="script.js"></script>
 </body>
 </html>
