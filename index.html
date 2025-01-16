@@ -3,93 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A minimal, beautiful dashboard with Pomodoro timer and calendar integration">
     <title>Focal - New Tab</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="time-display"></div>
-            <button id="theme-toggle" aria-label="Toggle dark/light mode">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-            </button>
-        </header>
+        <div class="bento-grid">
+            <!-- Header -->
+            <header class="header bento-card">
+                <div class="time-display" aria-label="Current time"></div>
+            </header>
 
-        <main>
-            <section class="pomodoro">
-                <div class="timer-display">25:00</div>
+            <!-- Pomodoro Timer -->
+            <section class="pomodoro bento-card" aria-label="Pomodoro timer">
+                <div class="timer-display" aria-live="polite">25:00</div>
                 <div class="timer-controls">
-                    <button class="timer-button start">Start</button>
-                    <button class="timer-button reset">Reset</button>
+                    <button class="timer-button start" aria-label="Start or pause timer">Start</button>
+                    <button class="timer-button reset" aria-label="Reset timer">Reset</button>
                 </div>
-                <div class="timer-mode">Focus Time</div>
+                <div class="timer-mode" aria-label="Timer mode">Focus Time</div>
             </section>
 
-            <div class="content-wrapper">
-                <section class="tasks">
-                    <div class="section-header">
-                        <h2>Tasks</h2>
-                    </div>
-                    <form class="task-form">
-                        <input type="text" placeholder="Add a task..." class="task-input">
-                        <button type="submit" class="add-task">Add</button>
-                    </form>
-                    <ul class="task-list"></ul>
-                </section>
+            <!-- Tasks -->
+            <section class="tasks bento-card" aria-label="Task management">
+                <div class="section-header">
+                    <h2>Tasks</h2>
+                </div>
+                <form class="task-form" aria-label="Add new task">
+                    <input 
+                        type="text" 
+                        class="task-input" 
+                        placeholder="Add a task..." 
+                        aria-label="Task description"
+                        required
+                    >
+                    <button 
+                        type="submit" 
+                        class="timer-button add-task" 
+                        aria-label="Add task"
+                    >
+                        Add
+                    </button>
+                </form>
+                <ul class="task-list" aria-label="Task list"></ul>
+            </section>
 
-                <section class="calendar-simple">
-                    <div class="calendar-header">
-                        <h2>Calendar</h2>
-                        <button class="info-button" title="How to get iCal URL">?</button>
-                    </div>
-                    <div class="calendar-input">
-                        <input type="text" placeholder="Paste your iCal URL..." class="ical-input">
-                        <button class="save-ical">Save</button>
-                    </div>
-                    <div class="info-modal hidden">
-                        <div class="modal-content">
-                            <h3>How to get your iCal URL</h3>
-                            <ol>
-                                <li>Go to Google Calendar</li>
-                                <li>Click the 3 dots next to your calendar</li>
-                                <li>Select "Settings and sharing"</li>
-                                <li>Scroll to "Secret address in iCal format"</li>
-                                <li>Click "Copy address"</li>
-                            </ol>
-                            <button class="close-modal">Close</button>
-                        </div>
-                    </div>
-                    <div class="events-list"></div>
-                </section>
-            </div>
-
-            <section class="shortcuts">
-                <div class="shortcuts-header">
-                    <h2>Quick Links</h2>
-                    <button class="add-shortcut" title="Add custom shortcut">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
+            <!-- Calendar -->
+            <section class="calendar-simple bento-card" aria-label="Calendar events">
+                <div class="calendar-header">
+                    <h2>Calendar</h2>
+                    <button 
+                        class="timer-button save-ical" 
+                        aria-label="Sync calendar"
+                    >
+                        Sync
                     </button>
                 </div>
-                <div class="shortcuts-grid">
-                    <!-- Quick links will be dynamically added here -->
+                <div class="calendar-input">
+                    <input 
+                        type="url" 
+                        class="task-input ical-input" 
+                        placeholder="Paste your iCal URL..." 
+                        aria-label="Calendar URL"
+                    >
                 </div>
+                <div 
+                    class="events-list" 
+                    aria-label="Upcoming events"
+                    aria-live="polite"
+                ></div>
             </section>
-        </main>
 
-        <!-- Notification container -->
-        <div class="notification-container"></div>
+            <!-- Shortcuts -->
+            <section class="shortcuts bento-card" aria-label="Quick links">
+                <div class="shortcuts-header">
+                    <h2>Quick Links</h2>
+                    <button 
+                        class="timer-button add-shortcut" 
+                        aria-label="Add new shortcut"
+                        title="Add custom shortcut"
+                    >
+                        Add
+                    </button>
+                </div>
+                <div 
+                    class="shortcuts-grid" 
+                    aria-label="Shortcuts grid"
+                ></div>
+            </section>
+        </div>
     </div>
 
     <!-- Scripts -->
-    <script src="script.js"></script>
+    <script defer src="script.js"></script>
 </body>
 </html>
-

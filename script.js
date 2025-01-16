@@ -1,232 +1,364 @@
-// Preset shortcuts with professional defaults
+// Constants and Configurations
+const POMODORO_TIME = 25 * 60; // 25 minutes in seconds
+const NOTIFICATION_DURATION = 3000; // 3 seconds
+const CALENDAR_REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes
+const MAX_EVENTS_DISPLAY = 5;
+
 const presetShortcuts = [
-    { name: 'YouTube', url: 'https://youtube.com' },
     { name: 'Gmail', url: 'https://gmail.com' },
-    { name: 'Google Drive', url: 'https://drive.google.com' },
+    { name: 'Drive', url: 'https://drive.google.com' },
     { name: 'Calendar', url: 'https://calendar.google.com' },
-    { name: 'LinkedIn', url: 'https://linkedin.com' },
     { name: 'GitHub', url: 'https://github.com' },
     { name: 'Docs', url: 'https://docs.google.com' },
     { name: 'Meet', url: 'https://meet.google.com' }
 ];
 
-// Time display
+// DOM Elements
+const elements = {
+    timeDisplay: document.querySelector('.time-display'),
+    timerDisplay: document.querySelector('.timer-display'),
+    startButton: document.querySelector('.start'),
+    resetButton: document.querySelector('.reset'),
+    taskForm: document.querySelector('.task-form'),
+    taskInput: document.querySelector('.task-input'),
+    taskList: document.querySelector('.task-list'),
+    icalInput: document.querySelector('.ical-input'),
+    saveIcalButton: document.querySelector('.save-ical'),
+    eventsList: document.querySelector('.events-list'),
+    shortcutsGrid: document.querySelector('.shortcuts-grid'),
+    addShortcutButton: document.querySelector('.add-shortcut')
+};
+
+// State Management
+let state = {
+    timerInterval: null,
+    timeLeft: POMODORO_TIME,
+    tasks: [],
+    shortcuts: [...presetShortcuts],
+    lastCalendarUpdate: null
+};
+
+// Time Display
 function updateTime() {
-    const timeDisplay = document.querySelector('.time-display');
+    if (!elements.timeDisplay) return;
     const now = new Date();
-    timeDisplay.textContent = now.toLocaleTimeString('en-US', { 
+    elements.timeDisplay.textContent = now.toLocaleTimeString('en-US', { 
         hour: '2-digit', 
         minute: '2-digit' 
     });
 }
+
 setInterval(updateTime, 1000);
 updateTime();
 
 // Pomodoro Timer
-const timerDisplay = document.querySelector('.timer-display');
-const startButton = document.querySelector('.timer-button.start');
-const resetButton = document.querySelector('.timer-button.reset');
-const timerMode = document.querySelector('.timer-mode');
-
-let timer;
-let timeLeft = 25 * 60; // 25 minutes
-let isRunning = false;
-let currentMode = 'focus';
-
 function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    if (!elements.timerDisplay) return;
+    const minutes = Math.floor(state.timeLeft / 60);
+    const seconds = state.timeLeft % 60;
+    elements.timerDisplay.textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 function startTimer() {
-    if (!isRunning) {
-        isRunning = true;
-        startButton.textContent = 'Pause';
-        timer = setInterval(() => {
-            timeLeft--;
-            updateTimerDisplay();
-            if (timeLeft === 0) {
-                clearInterval(timer);
-                isRunning = false;
-                startButton.textContent = 'Start';
-                if (currentMode === 'focus') {
-                    currentMode = 'break';
-                    timeLeft = 5 * 60; // 5 minutes break
-                    timerMode.textContent = 'Break Time';
-                } else {
-                    currentMode = 'focus';
-                    timeLeft = 25 * 60; // 25 minutes focus
-                    timerMode.textContent = 'Focus Time';
-                }
-                updateTimerDisplay();
-            }
-        }, 1000);
-    } else {
-        clearInterval(timer);
-        isRunning = false;
-        startButton.textContent = 'Resume';
-    }
+    if (state.timerInterval) return;
+    state.timerInterval = setInterval(() => {
+        state.timeLeft--;
+        updateTimerDisplay();
+        if (state.timeLeft === 0) {
+            clearInterval(state.timerInterval);
+            state.timerInterval = null;
+            elements.startButton.textContent = 'Start';
+            showNotification('Pomodoro timer completed!');
+            playTimerCompleteSound();
+        }
+    }, 1000);
+    elements.startButton.textContent = 'Pause';
+}
+
+function pauseTimer() {
+    if (!state.timerInterval) return;
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+    elements.startButton.textContent = 'Start';
 }
 
 function resetTimer() {
-    clearInterval(timer);
-    isRunning = false;
-    currentMode = 'focus';
-    timeLeft = 25 * 60;
-    timerMode.textContent = 'Focus Time';
-    startButton.textContent = 'Start';
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+    state.timeLeft = POMODORO_TIME;
     updateTimerDisplay();
+    elements.startButton.textContent = 'Start';
 }
 
-startButton.addEventListener('click', startTimer);
-resetButton.addEventListener('click', resetTimer);
+elements.startButton?.addEventListener('click', () => {
+    if (state.timerInterval) {
+        pauseTimer();
+    } else {
+        startTimer();
+    }
+});
 
-// Tasks
-const taskForm = document.querySelector('.task-form');
-const taskInput = document.querySelector('.task-input');
-const taskList = document.querySelector('.task-list');
-let tasks = [];
+elements.resetButton?.addEventListener('click', resetTimer);
 
-function renderTasks() {
-    taskList.innerHTML = '';
-    tasks.forEach((task, index) => {
-        const li = document.createElement('li');
-        li.className = 'task-item';
-        li.innerHTML = `
-            <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
-            <span class="task-text">${task.text}</span>
-            <button class="delete-task" data-index="${index}">&times;</button>
-        `;
-        taskList.appendChild(li);
-    });
-}
-
+// Tasks Management
 function addTask(text) {
-    tasks.push({ text, completed: false });
-    renderTasks();
+    const task = {
+        id: Date.now(),
+        text,
+        completed: false,
+        createdAt: new Date().toISOString()
+    };
+    state.tasks.unshift(task);
     saveTasks();
-}
-
-function deleteTask(index) {
-    tasks.splice(index, 1);
     renderTasks();
-    saveTasks();
 }
 
-function toggleTask(index) {
-    tasks[index].completed = !tasks[index].completed;
-    renderTasks();
-    saveTasks();
-}
-
-function saveTasks() {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-}
-
-function loadTasks() {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-        tasks = JSON.parse(savedTasks);
+function toggleTask(id) {
+    const task = state.tasks.find(t => t.id === id);
+    if (task) {
+        task.completed = !task.completed;
+        saveTasks();
         renderTasks();
     }
 }
 
-taskForm.addEventListener('submit', (e) => {
+function deleteTask(id) {
+    state.tasks = state.tasks.filter(t => t.id !== id);
+    saveTasks();
+    renderTasks();
+}
+
+function createTaskElement(task) {
+    const li = document.createElement('li');
+    li.className = 'task-item';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = task.completed;
+    checkbox.addEventListener('change', () => toggleTask(task.id));
+    
+    const text = document.createElement('span');
+    text.textContent = task.text;
+    text.style.textDecoration = task.completed ? 'line-through' : 'none';
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.innerHTML = '×';
+    deleteBtn.className = 'delete-task';
+    deleteBtn.addEventListener('click', () => deleteTask(task.id));
+    
+    li.append(checkbox, text, deleteBtn);
+    return li;
+}
+
+function renderTasks() {
+    if (!elements.taskList) return;
+    elements.taskList.innerHTML = '';
+    state.tasks.forEach(task => {
+        elements.taskList.appendChild(createTaskElement(task));
+    });
+}
+
+elements.taskForm?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const text = taskInput.value.trim();
+    const text = elements.taskInput.value.trim();
     if (text) {
         addTask(text);
-        taskInput.value = '';
+        elements.taskInput.value = '';
     }
 });
 
-taskList.addEventListener('click', (e) => {
-    if (e.target.classList.contains('delete-task')) {
-        const index = e.target.dataset.index;
-        deleteTask(index);
-    } else if (e.target.classList.contains('task-checkbox')) {
-        const index = e.target.closest('.task-item').querySelector('.delete-task').dataset.index;
-        toggleTask(index);
+// Calendar Integration
+async function fetchCalendarEvents(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Failed to fetch calendar data');
+        }
+        const data = await response.text();
+        return parseICalEvents(data);
+    } catch (error) {
+        console.error('Calendar fetch error:', error);
+        showNotification('Failed to fetch calendar events');
+        return [];
     }
-});
-
-loadTasks();
-
-// Calendar info modal
-const infoButton = document.querySelector('.info-button');
-const infoModal = document.querySelector('.info-modal');
-const closeModal = document.querySelector('.close-modal');
-
-infoButton.addEventListener('click', () => {
-    infoModal.classList.remove('hidden');
-});
-
-closeModal.addEventListener('click', () => {
-    infoModal.classList.add('hidden');
-});
-
-// Close modal when clicking outside
-window.addEventListener('click', (e) => {
-    if (e.target === infoModal) {
-        infoModal.classList.add('hidden');
-    }
-});
-
-// iCal URL handling
-const icalInput = document.querySelector('.ical-input');
-const saveIcalButton = document.querySelector('.save-ical');
-
-saveIcalButton.addEventListener('click', () => {
-    const icalUrl = icalInput.value.trim();
-    if (icalUrl) {
-        localStorage.setItem('icalUrl', icalUrl);
-        showNotification('Calendar URL saved');
-        fetchAndDisplayEvents(icalUrl);
-    }
-});
-
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.className = 'notification';
-    notification.textContent = message;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.classList.add('show');
-    }, 10);
-    setTimeout(() => {
-        notification.classList.remove('show');
-        setTimeout(() => {
-            notification.remove();
-        }, 300);
-    }, 3000);
 }
 
-// Fetch and display events
-function fetchAndDisplayEvents(url) {
-    // This is a placeholder function. In a real implementation, you would fetch the iCal data
-    // from the server and parse it to display events. For demonstration purposes, we'll just
-    // show some dummy events.
-    const eventslist = document.querySelector('.events-list');
-    eventslist.innerHTML = `
-        <div>9:00 AM - Team Meeting</div>
-        <div>2:00 PM - Client Call</div>
-        <div>4:30 PM - Project Review</div>
-    `;
+function parseICalEvents(icalData) {
+    try {
+        const events = [];
+        const lines = icalData.split(/\r\n|\n|\r/);
+        let currentEvent = null;
+        let lastKey = '';
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            
+            // Handle line folding
+            while (i + 1 < lines.length && lines[i + 1].match(/^\s/)) {
+                line += lines[i + 1].substring(1);
+                i++;
+            }
+            
+            if (line === 'BEGIN:VEVENT') {
+                currentEvent = {};
+            } else if (line === 'END:VEVENT') {
+                if (currentEvent?.start && currentEvent?.summary) {
+                    events.push(currentEvent);
+                }
+                currentEvent = null;
+            } else if (currentEvent) {
+                const [key, ...values] = line.split(':');
+                const value = values.join(':');
+                
+                // Handle property parameters
+                const [realKey, ...params] = key.split(';');
+                lastKey = realKey;
+
+                switch (realKey) {
+                    case 'SUMMARY':
+                        currentEvent.summary = value;
+                        break;
+                    case 'DESCRIPTION':
+                        currentEvent.description = value;
+                        break;
+                    case 'DTSTART':
+                        currentEvent.start = parseICalDate(value, params);
+                        break;
+                    case 'DTEND':
+                        currentEvent.end = parseICalDate(value, params);
+                        break;
+                    case 'LOCATION':
+                        currentEvent.location = value;
+                        break;
+                }
+            }
+        }
+
+        return events.sort((a, b) => a.start - b.start);
+    } catch (error) {
+        console.error('Error parsing iCal data:', error);
+        return [];
+    }
 }
 
-// Load saved iCal URL
-const savedIcalUrl = localStorage.getItem('icalUrl');
-if (savedIcalUrl) {
-    icalInput.value = savedIcalUrl;
-    fetchAndDisplayEvents(savedIcalUrl);
+function parseICalDate(dateStr, params = []) {
+    try {
+        // Handle different date formats and timezones
+        let parsedDate;
+        if (dateStr.includes('T')) {
+            // With time
+            parsedDate = new Date(dateStr.replace(/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?/, '$1-$2-$3T$4:$5:$6Z'));
+        } else {
+            // Date only
+            parsedDate = new Date(dateStr.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'));
+        }
+
+        // Check if date is valid
+        if (isNaN(parsedDate.getTime())) {
+            throw new Error('Invalid date');
+        }
+
+        return parsedDate;
+    } catch (error) {
+        console.error('Error parsing date:', dateStr, error);
+        return new Date(); // Fallback to current date
+    }
 }
 
-// Shortcuts handling
-const shortcutsGrid = document.querySelector('.shortcuts-grid');
-const addShortcutButton = document.querySelector('.add-shortcut');
-let shortcuts = [...presetShortcuts];
+function displayEvents(events) {
+    if (!elements.eventsList) return;
+    
+    elements.eventsList.innerHTML = '';
+    const now = new Date();
+    const upcomingEvents = events
+        .filter(event => event.end > now)
+        .slice(0, MAX_EVENTS_DISPLAY);
 
+    if (upcomingEvents.length === 0) {
+        const noEvents = document.createElement('div');
+        noEvents.className = 'event-item';
+        noEvents.textContent = 'No upcoming events';
+        elements.eventsList.appendChild(noEvents);
+        return;
+    }
+
+    upcomingEvents.forEach(event => {
+        const eventElement = document.createElement('div');
+        eventElement.className = 'event-item';
+        
+        const title = document.createElement('div');
+        title.className = 'event-title';
+        title.textContent = event.summary;
+
+        const time = document.createElement('div');
+        time.className = 'event-time';
+        time.textContent = formatEventDateTime(event);
+        
+        if (event.location) {
+            const location = document.createElement('div');
+            location.className = 'event-location';
+            location.textContent = event.location;
+            eventElement.appendChild(location);
+        }
+        
+        eventElement.append(title, time);
+        elements.eventsList.appendChild(eventElement);
+    });
+}
+
+function formatEventDateTime(event) {
+    const options = {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    };
+    
+    const startTime = event.start.toLocaleString('en-US', options);
+    const endTime = event.end.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    return `${startTime} - ${endTime}`;
+}
+
+// Calendar Auto-refresh
+function setupCalendarRefresh() {
+    async function refreshCalendar() {
+        const url = elements.icalInput?.value.trim();
+        if (url) {
+            const events = await fetchCalendarEvents(url);
+            if (events.length > 0) {
+                displayEvents(events);
+                state.lastCalendarUpdate = new Date();
+            }
+        }
+    }
+
+    // Initial load
+    refreshCalendar();
+
+    // Setup periodic refresh
+    setInterval(refreshCalendar, CALENDAR_REFRESH_INTERVAL);
+}
+
+elements.saveIcalButton?.addEventListener('click', async () => {
+    const url = elements.icalInput?.value.trim();
+    if (url) {
+        showNotification('Fetching calendar events...');
+        const events = await fetchCalendarEvents(url);
+        if (events.length > 0) {
+            chrome.storage.sync.set({ icalUrl: url });
+            displayEvents(events);
+            showNotification('Calendar updated successfully');
+        }
+    }
+});
+
+// Shortcuts Management
 function createShortcutElement(shortcut, index) {
     const div = document.createElement('div');
     div.className = 'shortcut-wrapper';
@@ -240,13 +372,10 @@ function createShortcutElement(shortcut, index) {
     nameSpan.className = 'shortcut-name';
     nameSpan.textContent = shortcut.name;
     
-    a.appendChild(nameSpan);
-    div.appendChild(a);
-
     if (index >= presetShortcuts.length) {
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-shortcut';
-        deleteBtn.innerHTML = '&times;';
+        deleteBtn.innerHTML = '×';
         deleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -255,68 +384,116 @@ function createShortcutElement(shortcut, index) {
         div.appendChild(deleteBtn);
     }
     
+    a.appendChild(nameSpan);
+    div.appendChild(a);
     return div;
 }
 
 function renderShortcuts() {
-    shortcutsGrid.innerHTML = '';
-    shortcuts.forEach((shortcut, index) => {
-        shortcutsGrid.appendChild(createShortcutElement(shortcut, index));
+    if (!elements.shortcutsGrid) return;
+    elements.shortcutsGrid.innerHTML = '';
+    state.shortcuts.forEach((shortcut, index) => {
+        elements.shortcutsGrid.appendChild(createShortcutElement(shortcut, index));
     });
 }
 
 function deleteShortcut(index) {
     if (index >= presetShortcuts.length) {
-        shortcuts.splice(index, 1);
+        state.shortcuts.splice(index, 1);
         renderShortcuts();
-        saveShortcuts();
+        chrome.storage.sync.set({ shortcuts: state.shortcuts });
     }
 }
 
-addShortcutButton.addEventListener('click', () => {
-    const name = prompt('Enter shortcut name:');
-    const url = prompt('Enter shortcut URL:');
+elements.addShortcutButton?.addEventListener('click', () => {
+    const name = prompt('Enter shortcut name:')?.trim();
+    const url = prompt('Enter shortcut URL:')?.trim();
+    
     if (name && url) {
-        const formattedUrl = url.startsWith('http://') || url.startsWith('https://')
-            ? url
-            : `https://${url}`;
-        shortcuts.push({ name, url: formattedUrl });
+        const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
+        state.shortcuts.push({ name, url: formattedUrl });
         renderShortcuts();
-        saveShortcuts();
+        chrome.storage.sync.set({ shortcuts: state.shortcuts });
+        showNotification('Shortcut added successfully');
     }
 });
 
-function saveShortcuts() {
-    localStorage.setItem('shortcuts', JSON.stringify(shortcuts.slice(presetShortcuts.length)));
+// Notifications
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, NOTIFICATION_DURATION);
 }
 
-function loadShortcuts() {
-    const savedShortcuts = localStorage.getItem('shortcuts');
-    if (savedShortcuts) {
-        shortcuts = [...presetShortcuts, ...JSON.parse(savedShortcuts)];
+// Data Persistence
+function saveTasks() {
+    chrome.storage.sync.set({ tasks: state.tasks });
+}
+
+// Initialize
+async function initialize() {
+    try {
+        const storage = await chrome.storage.sync.get(['tasks', 'shortcuts', 'icalUrl']);
+        
+        // Load tasks
+        if (storage.tasks) {
+            state.tasks = storage.tasks;
+            renderTasks();
+        }
+        
+        // Load shortcuts
+        if (storage.shortcuts) {
+            state.shortcuts = [...presetShortcuts, ...storage.shortcuts.filter(s => 
+                !presetShortcuts.some(ps => ps.url === s.url)
+            )];
+            renderShortcuts();
+        } else {
+            renderShortcuts();
+        }
+        
+        // Load calendar
+        if (storage.icalUrl) {
+            elements.icalInput.value = storage.icalUrl;
+            setupCalendarRefresh();
+        }
+        
+        // Set up timer display
+        updateTimerDisplay();
+        
+    } catch (error) {
+        console.error('Error initializing app:', error);
+        showNotification('Error loading saved data');
     }
-    renderShortcuts();
 }
 
-loadShortcuts();
-
-// Theme toggle
-const themeToggle = document.getElementById('theme-toggle');
-const body = document.body;
-
-function setTheme(isDark) {
-    body.classList.toggle('dark-mode', isDark);
-    localStorage.setItem('darkMode', isDark);
-}
-
-themeToggle.addEventListener('click', () => {
-    const isDark = !body.classList.contains('dark-mode');
-    setTheme(isDark);
+// Handle visibility change for timer
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (state.timerInterval) {
+            // Store the time when tab becomes hidden
+            state.hiddenTime = new Date();
+        }
+    } else {
+        if (state.hiddenTime && state.timerInterval) {
+            // Calculate elapsed time and update timer
+            const elapsedSeconds = Math.floor((new Date() - state.hiddenTime) / 1000);
+            state.timeLeft = Math.max(0, state.timeLeft - elapsedSeconds);
+            updateTimerDisplay();
+            
+            if (state.timeLeft === 0) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+                elements.startButton.textContent = 'Start';
+                showNotification('Pomodoro timer completed while tab was hidden!');
+            }
+        }
+    }
 });
 
-// Load saved theme preference
-const savedTheme = localStorage.getItem('darkMode');
-if (savedTheme !== null) {
-    setTheme(savedTheme === 'true');
-}
-
+// Start initialization
+initialize();
